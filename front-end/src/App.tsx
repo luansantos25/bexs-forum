@@ -3,13 +3,16 @@ import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import Routes from './routes'
 
+import GlobalStyle from './styles'
+
 const App: React.FC = () => {
   return (
-    <div className="App">
+    <>
       <BrowserRouter>
         <Routes />
       </BrowserRouter>
-    </div>
+      <GlobalStyle />
+    </>
   )
 }
 
