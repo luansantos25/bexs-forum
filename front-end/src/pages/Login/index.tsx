@@ -1,5 +1,7 @@
 import React from 'react'
 
-const Login: React.FC = () => <h1>Login</h1>
+import { Title } from './styles'
+
+const Login: React.FC = () => <Title>Login</Title>
 
 export default Login
