@@ -106,15 +106,17 @@ const Home: React.FC = () => {
     <>
       <Header />
       <Container>
-        <h1>Olá {userName}</h1>
-        <Form onSubmit={handleQuestionSubmit}>
-          <textarea
-            placeholder="Type your question"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
-          <button type="submit">Send</button>
-        </Form>
+        <div className="top-content">
+          <h1>Olá {userName}</h1>
+          <Form onSubmit={handleQuestionSubmit}>
+            <textarea
+              placeholder="Type your question"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+            />
+            <button type="submit">Send</button>
+          </Form>
+        </div>
 
         <QuestionsContainer>
           {questions.map((questionItem) => (

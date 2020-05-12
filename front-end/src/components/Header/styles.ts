@@ -9,7 +9,7 @@ export const Header = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 960px;
+    max-width: 960px;
     height: 60px;
     margin: 0 auto;
     padding: 0 20px;

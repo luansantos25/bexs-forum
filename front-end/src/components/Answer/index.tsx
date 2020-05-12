@@ -25,23 +25,25 @@ const Answer: React.FC<Props> = ({
 }: Props) => {
   return (
     <StyledAnswer>
-      <div className="answer-item">
+      <div className="answer">
         <img
           src="https://api.adorable.io/avatars/285/abott@adorable.png"
           alt="User Avatar"
         />
-        <div className="answer-data">
-          <strong>{answer.user}</strong>
-          <div className="answer-text">{answer.text}</div>
+        <div className="answer-content">
+          <div className="answer-data">
+            <strong>{answer.user}</strong>
+            <div className="answer-text">{answer.text}</div>
+          </div>
+          <button type="button" onClick={() => handleLikeAnswer(answer)}>
+            <FaHeart
+              className={
+                answer.likes.find((like) => like === userName) ? 'liked' : ''
+              }
+            />
+            <span>{answer.likes.length}</span>
+          </button>
         </div>
-        <button type="button" onClick={() => handleLikeAnswer(answer)}>
-          <FaHeart
-            className={
-              answer.likes.find((like) => like === userName) ? 'liked' : ''
-            }
-          />
-          {answer.likes.length}
-        </button>
       </div>
     </StyledAnswer>
   )

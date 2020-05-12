@@ -64,27 +64,28 @@ const Question: React.FC<Props> = ({
       </div>
       {showAnswers && (
         <AnswerContainer>
-          {/* <Answers> */}
           {question.answers &&
             question.answers.map((answer) => (
               <Answer
                 key={answer.id}
                 userName={userName}
                 handleLikeAnswer={() =>
-                  handleLikeAnswer ? handleLikeAnswer(answer, question) : null}
+                  handleLikeAnswer ? handleLikeAnswer(answer, question) : null
+                }
                 answer={answer}
               />
             ))}
-          {/* </Answers> */}
           <Response>
             <form>
               <textarea
                 value={answerText.text}
+                placeholder="Write your response"
                 onChange={(e) =>
                   setAnswerText({
                     questionId: question.id,
                     text: e.target.value,
-                  })}
+                  })
+                }
               />
               <button type="button" onClick={() => handleAnswerSubmitLocal()}>
                 Answer
