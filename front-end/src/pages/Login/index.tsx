@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Title, Form } from './styles'
+import { Title, Form, Container } from './styles'
 
 const Login: React.FC = () => {
   const [userName, setUserName] = useState('')
@@ -15,17 +15,19 @@ const Login: React.FC = () => {
   }
 
   return (
-    <>
-      <Title>Login</Title>
-      <Form onSubmit={handleSubmit}>
-        <input
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-          placeholder="username"
-        />
-        <button type="submit">SignIn</button>
-      </Form>
-    </>
+    <Container>
+      <div className="login-content">
+        <Title>Login</Title>
+        <Form onSubmit={handleSubmit}>
+          <input
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="username"
+          />
+          <button type="submit">SignIn</button>
+        </Form>
+      </div>
+    </Container>
   )
 }
 

@@ -9,16 +9,17 @@ export default createGlobalStyle`
   }
 
   body {
-    background-color: #f0f0f5;
+    background-color: #efefef57;
+  }
+  p, span, h1, h2, h3, h4, h5, h6, input, textarea {
+    color: #4c4c4c;
   }
 
   body, input, button {
     font: 16px Roboto, sans-serif;
   }
 
-  #root {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 40px 20px;
+  button {
+    cursor: pointer;
   }
 `
