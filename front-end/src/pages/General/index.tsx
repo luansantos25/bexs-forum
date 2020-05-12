@@ -1,12 +1,16 @@
 import React, { useState, FormEvent, useEffect } from 'react'
 
 import { uuid } from 'uuidv4'
-import { Link } from 'react-router-dom'
 import Header from '../../components/Header'
 
 import Question from '../../components/Question'
 
 import { Container, Form, QuestionsContainer } from './styles'
+
+interface AnswerForm {
+  questionId: string
+  text: string
+}
 
 interface Answer {
   id: string
@@ -24,10 +28,11 @@ interface QuestionTypes {
   answers: Answer[]
 }
 
-const Home: React.FC = () => {
+const General: React.FC = () => {
   const userName = localStorage.getItem('@bexs/userName') ?? ''
 
   const [question, setQuestion] = useState('')
+  const [answersForm, setAnswersForm] = useState<AnswerForm[]>([])
 
   const [questions, setQuestions] = useState<QuestionTypes[]>([
     {
@@ -102,6 +107,63 @@ const Home: React.FC = () => {
     setQuestion('')
   }
 
+  function handleAnswerSubmit(answerData: AnswerForm): void {
+    const questionData = questions.find(
+      (questionItem) => questionItem.id === answerData.questionId,
+    )
+
+    if (!questionData) return
+
+    const updated = questions.map((questionItem) =>
+      questionItem.id === questionData.id
+        ? {
+            ...questionItem,
+            answers: [
+              ...questionItem.answers,
+              {
+                id: uuid(),
+                text: answerData?.text ?? '',
+                user: userName,
+                creationDate: '',
+                likes: [],
+              },
+            ],
+          }
+        : questionItem,
+    )
+
+    const resetAnswerForm = answersForm.map((answerItem) =>
+      answerItem.questionId === questionData.id
+        ? { ...answerItem, text: '' }
+        : answerItem,
+    )
+
+    setQuestions(updated)
+    setAnswersForm(resetAnswerForm)
+  }
+
+  function handleLikeAnswer(answer: Answer, questionData: QuestionTypes): void {
+    const updatedQuestions = questions.map((questionItem) =>
+      questionItem.id === questionData.id
+        ? {
+            ...questionItem,
+            answers: questionItem.answers.map((answerItem) =>
+              answerItem.id === answer.id
+                ? {
+                    ...answerItem,
+                    likes: answerItem.likes.includes(userName)
+                      ? answerItem.likes.filter((like) => like !== userName)
+                      : [...answerItem.likes, userName],
+                  }
+                : answerItem,
+            ),
+          }
+        : questionItem,
+    )
+
+    setQuestions(updatedQuestions)
+  }
+
   return (
     <>
       <Header />
@@ -118,13 +180,15 @@ const Home: React.FC = () => {
 
         <QuestionsContainer>
           {questions.map((questionItem) => (
-            <Link to={`/question/${questionItem.id}`} key={uuid()}>
-              <Question
-                userName={userName}
-                question={questionItem}
-                showAnswers={false}
-              />
-            </Link>
+            <Question
+              key={questionItem.id}
+              userName={userName}
+              question={questionItem}
+              handleAnswerSubmit={handleAnswerSubmit}
+              handleLikeAnswer={(answer, questionData) =>
+                handleLikeAnswer(answer, questionData)
+              }
+            />
           ))}
         </QuestionsContainer>
       </Container>
@@ -132,4 +196,4 @@ const Home: React.FC = () => {
   )
 }
 
-export default Home
+export default General
