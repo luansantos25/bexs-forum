@@ -65,26 +65,24 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     async function getData(): Promise<void> {
-      const questionss = await api.get('/questions')
+      const questionsData = await api.get('/questions')
 
-      setQuestions(questionss.data)
-
-      console.log(questionss)
+      setQuestions(questionsData.data)
     }
 
     getData()
   }, [])
 
-  useEffect(() => {
-    const initialQuestions = localStorage.getItem('@benx/questions')
-    if (initialQuestions) {
-      setQuestions(JSON.parse(initialQuestions))
-    }
-  }, [])
+  // useEffect(() => {
+  //   const initialQuestions = localStorage.getItem('@benx/questions')
+  //   if (initialQuestions) {
+  //     setQuestions(JSON.parse(initialQuestions))
+  //   }
+  // }, [])
 
-  useEffect(() => {
-    localStorage.setItem('@benx/questions', JSON.stringify(questions))
-  }, [questions])
+  // useEffect(() => {
+  //   localStorage.setItem('@benx/questions', JSON.stringify(questions))
+  // }, [questions])
 
   function handleQuestionSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()

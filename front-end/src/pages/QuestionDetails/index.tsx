@@ -25,25 +25,25 @@ const QuestionDetails: React.FC = () => {
 
   useEffect(() => {
     async function getData(): Promise<void> {
-      const questionData = api.get(`/questions`)
+      const questionData = await api.get(`/questions/${id}`)
+
+      setQuestion(questionData.data)
 
       console.log(questionData)
     }
 
     getData()
-  }, [])
+  }, [id])
 
   useEffect(() => {
-    const questionsData = localStorage.getItem('@benx/questions')
-
-    if (questionsData) {
-      const questions: QuestionTypes[] = JSON.parse(questionsData)
-
-      setQuestion(
-        questions.find((questionItem) => questionItem._id === id) ??
-          ({} as QuestionTypes),
-      )
-    }
+    // const questionsData = localStorage.getItem('@benx/questions')
+    // if (questionsData) {
+    //   const questions: QuestionTypes[] = JSON.parse(questionsData)
+    //   setQuestion(
+    //     questions.find((questionItem) => questionItem._id === id) ??
+    //       ({} as QuestionTypes),
+    //   )
+    // }
   }, [id])
 
   function handleLikeAnswer(answer: Answer): void {
@@ -63,19 +63,32 @@ const QuestionDetails: React.FC = () => {
 
     setQuestion(updatedQuestion)
 
-    const questionsDb: string = localStorage.getItem('@benx/questions') ?? ''
+    // const questionsDb: string = localStorage.getItem('@benx/questions') ?? ''
 
-    if (questionsDb) {
-      const parsedQuestions: QuestionTypes[] = JSON.parse(questionsDb)
+    // if (questionsDb) {
+    //   const parsedQuestions: QuestionTypes[] = JSON.parse(questionsDb)
 
-      const updatedQuestions = parsedQuestions.map((questionItem) =>
-        questionItem._id === question._id ? updatedQuestion : questionItem,
+    //   const updatedQuestions = parsedQuestions.map((questionItem) =>
+    //     questionItem._id === question._id ? updatedQuestion : questionItem,
+    //   )
+
+    //   localStorage.setItem('@benx/questions', JSON.stringify(updatedQuestions))
+    // }
+
+    const liked = answer.likes.includes(username)
+
+    if (!liked) {
+      console.log('liking')
+      api.post(`/questions/${question._id}/answers/${answer._id}/likes`, {
+        username,
+      })
+    } else {
+      console.log('disliking')
+
+      api.delete(
+        `/questions/${question._id}/answers/${answer._id}/likes/${username}`,
       )
-
-      localStorage.setItem('@benx/questions', JSON.stringify(updatedQuestions))
     }
-
-    // api.post(`/questions/${question._id}`)
   }
 
   function handleAnswerSubmit(answer: AnswerForm): void {
@@ -98,17 +111,17 @@ const QuestionDetails: React.FC = () => {
     setQuestion(updated)
     setAnswerForm(resetAnswerForm)
 
-    const questionsDb: string = localStorage.getItem('@benx/questions') ?? ''
+    // const questionsDb: string = localStorage.getItem('@benx/questions') ?? ''
 
-    if (questionsDb) {
-      const parsedQuestions: QuestionTypes[] = JSON.parse(questionsDb)
+    // if (questionsDb) {
+    //   const parsedQuestions: QuestionTypes[] = JSON.parse(questionsDb)
 
-      const updatedQuestions = parsedQuestions.map((questionItem) =>
-        questionItem._id === question._id ? updated : questionItem,
-      )
+    //   const updatedQuestions = parsedQuestions.map((questionItem) =>
+    //     questionItem._id === question._id ? updated : questionItem,
+    //   )
 
-      localStorage.setItem('@benx/questions', JSON.stringify(updatedQuestions))
-    }
+    //   localStorage.setItem('@benx/questions', JSON.stringify(updatedQuestions))
+    // }
 
     api.post(`/questions/${question._id}/answers`, { text: answer.text })
   }

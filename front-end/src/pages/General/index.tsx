@@ -3,6 +3,8 @@ import React, { useState, FormEvent, useEffect } from 'react'
 import { uuid } from 'uuidv4'
 import Header from '../../components/Header'
 
+import api from '../../services/api'
+
 import Question from '../../components/Question'
 
 import { Container, Form, QuestionsContainer } from './styles'
@@ -10,7 +12,7 @@ import { Container, Form, QuestionsContainer } from './styles'
 import { Answer, QuestionTypes, AnswerForm } from '../../types'
 
 const General: React.FC = () => {
-  const userName = localStorage.getItem('@bexs/userName') ?? ''
+  const username = localStorage.getItem('@bexs/userName') ?? ''
 
   const [question, setQuestion] = useState('')
   const [answersForm, setAnswersForm] = useState<AnswerForm[]>([])
@@ -63,15 +65,14 @@ const General: React.FC = () => {
   ])
 
   useEffect(() => {
-    const initialQuestions = localStorage.getItem('@benx/questions')
-    if (initialQuestions) {
-      setQuestions(JSON.parse(initialQuestions))
-    }
-  }, [])
+    async function getData(): Promise<void> {
+      const questionsData = await api.get('/questions')
 
-  useEffect(() => {
-    localStorage.setItem('@benx/questions', JSON.stringify(questions))
-  }, [questions])
+      setQuestions(questionsData.data)
+    }
+
+    getData()
+  }, [])
 
   function handleQuestionSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
@@ -79,13 +80,15 @@ const General: React.FC = () => {
     const newQuestion = {
       _id: uuid(),
       text: question,
-      username: userName,
+      username,
       createdAt: '',
       answers: [],
     }
 
     setQuestions([newQuestion, ...questions])
     setQuestion('')
+
+    api.post('/questions', newQuestion)
   }
 
   function handleAnswerSubmit(answerData: AnswerForm): void {
@@ -104,7 +107,7 @@ const General: React.FC = () => {
               {
                 _id: uuid(),
                 text: answerData?.text ?? '',
-                username: userName,
+                username,
                 createdAt: '',
                 likes: [],
               },
@@ -121,6 +124,10 @@ const General: React.FC = () => {
 
     setQuestions(updated)
     setAnswersForm(resetAnswerForm)
+
+    api.post(`/questions/${questionData._id}/answers`, {
+      text: answerData.text,
+    })
   }
 
   function handleLikeAnswer(answer: Answer, questionData: QuestionTypes): void {
@@ -132,9 +139,9 @@ const General: React.FC = () => {
               answerItem._id === answer._id
                 ? {
                     ...answerItem,
-                    likes: answerItem.likes.includes(userName)
-                      ? answerItem.likes.filter((like) => like !== userName)
-                      : [...answerItem.likes, userName],
+                    likes: answerItem.likes.includes(username)
+                      ? answerItem.likes.filter((like) => like !== username)
+                      : [...answerItem.likes, username],
                   }
                 : answerItem,
             ),
@@ -143,13 +150,28 @@ const General: React.FC = () => {
     )
 
     setQuestions(updatedQuestions)
+
+    const liked = answer.likes.includes(username)
+
+    if (!liked) {
+      console.log('liking')
+      api.post(`/questions/${questionData._id}/answers/${answer._id}/likes`, {
+        username,
+      })
+    } else {
+      console.log('disliking')
+
+      api.delete(
+        `/questions/${questionData._id}/answers/${answer._id}/likes/${username}`,
+      )
+    }
   }
 
   return (
     <>
       <Header />
       <Container>
-        <h1>Olá {userName}</h1>
+        <h1>Olá {username}</h1>
         <Form onSubmit={handleQuestionSubmit}>
           <textarea
             placeholder="Type your question"
@@ -163,7 +185,7 @@ const General: React.FC = () => {
           {questions.map((questionItem) => (
             <Question
               key={questionItem._id}
-              userName={userName}
+              userName={username}
               question={questionItem}
               handleAnswerSubmit={handleAnswerSubmit}
               handleLikeAnswer={(answer, questionData) =>

@@ -14,7 +14,7 @@ const Header: React.FC = () => {
     <StyledHeader>
       <div className="header-content">
         <div className="brand">
-          <a href="test">Bexs</a>
+          <Link to="/home">Bexs</Link>
         </div>
         <nav>
           <ul>
