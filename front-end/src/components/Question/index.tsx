@@ -5,26 +5,7 @@ import Answer from '../Answer'
 
 import { StyledQuestion, AnswerContainer, Response } from './styles'
 
-interface AnswerTypes {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  likes: string[]
-}
-
-interface QuestionTypes {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  answers: AnswerTypes[]
-}
-
-interface AnswerForm {
-  questionId: string
-  text: string
-}
+import { Answer as AnswerTypes, QuestionTypes, AnswerForm } from '../../types'
 
 interface Props {
   question: QuestionTypes
@@ -67,7 +48,7 @@ const Question: React.FC<Props> = ({
           {question.answers &&
             question.answers.map((answer) => (
               <Answer
-                key={answer.id}
+                key={answer._id}
                 userName={userName}
                 handleLikeAnswer={() =>
                   handleLikeAnswer ? handleLikeAnswer(answer, question) : null
@@ -82,7 +63,7 @@ const Question: React.FC<Props> = ({
                 placeholder="Write your response"
                 onChange={(e) =>
                   setAnswerText({
-                    questionId: question.id,
+                    questionId: question._id,
                     text: e.target.value,
                   })
                 }

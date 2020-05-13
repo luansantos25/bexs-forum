@@ -4,13 +4,7 @@ import { FaHeart } from 'react-icons/fa'
 
 import { StyledAnswer } from './styles'
 
-interface AnswerTypes {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  likes: string[]
-}
+import { Answer as AnswerTypes } from '../../types'
 
 interface Props {
   userName: string
@@ -32,7 +26,7 @@ const Answer: React.FC<Props> = ({
         />
         <div className="answer-content">
           <div className="answer-data">
-            <strong>{answer.user}</strong>
+            <strong>{answer.username}</strong>
             <div className="answer-text">{answer.text}</div>
           </div>
           <button type="button" onClick={() => handleLikeAnswer(answer)}>

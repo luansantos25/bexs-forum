@@ -3,41 +3,35 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { uuid } from 'uuidv4'
+
+import api from '../../services/api'
+
 import Header from '../../components/Header'
 
 import Question from '../../components/Question'
 
 import { Container, QuestionsContainer } from './styles'
 
-interface Answer {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  likes: string[]
-}
-
-interface QuestionTypes {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  answers: Answer[]
-}
-
-interface AnswerForm {
-  questionId: string
-  text: string
-}
+import { Answer, QuestionTypes, AnswerForm } from '../../types'
 
 const QuestionDetails: React.FC = () => {
   const { id } = useParams()
 
-  const userName = localStorage.getItem('@bexs/userName') ?? ''
+  const username = localStorage.getItem('@bexs/userName') ?? ''
 
   const [answerForm, setAnswerForm] = useState<AnswerForm>({} as AnswerForm)
 
   const [question, setQuestion] = useState<QuestionTypes>({} as QuestionTypes)
+
+  useEffect(() => {
+    async function getData(): Promise<void> {
+      const questionData = api.get(`/questions`)
+
+      console.log(questionData)
+    }
+
+    getData()
+  }, [])
 
   useEffect(() => {
     const questionsData = localStorage.getItem('@benx/questions')
@@ -46,7 +40,7 @@ const QuestionDetails: React.FC = () => {
       const questions: QuestionTypes[] = JSON.parse(questionsData)
 
       setQuestion(
-        questions.find((questionItem) => questionItem.id === id) ??
+        questions.find((questionItem) => questionItem._id === id) ??
           ({} as QuestionTypes),
       )
     }
@@ -56,12 +50,12 @@ const QuestionDetails: React.FC = () => {
     const updatedQuestion = {
       ...question,
       answers: question.answers.map((answerItem) =>
-        answerItem.id === answer.id
+        answerItem._id === answer._id
           ? {
               ...answerItem,
-              likes: answerItem.likes.includes(userName)
-                ? answerItem.likes.filter((like) => like !== userName)
-                : [...answerItem.likes, userName],
+              likes: answerItem.likes.includes(username)
+                ? answerItem.likes.filter((like) => like !== username)
+                : [...answerItem.likes, username],
             }
           : answerItem,
       ),
@@ -75,11 +69,13 @@ const QuestionDetails: React.FC = () => {
       const parsedQuestions: QuestionTypes[] = JSON.parse(questionsDb)
 
       const updatedQuestions = parsedQuestions.map((questionItem) =>
-        questionItem.id === question.id ? updatedQuestion : questionItem,
+        questionItem._id === question._id ? updatedQuestion : questionItem,
       )
 
       localStorage.setItem('@benx/questions', JSON.stringify(updatedQuestions))
     }
+
+    // api.post(`/questions/${question._id}`)
   }
 
   function handleAnswerSubmit(answer: AnswerForm): void {
@@ -88,10 +84,10 @@ const QuestionDetails: React.FC = () => {
       answers: [
         ...question.answers,
         {
-          id: uuid(),
+          _id: uuid(),
           text: answer?.text ?? '',
-          user: userName,
-          creationDate: '',
+          username,
+          createdAt: '',
           likes: [],
         },
       ],
@@ -108,11 +104,13 @@ const QuestionDetails: React.FC = () => {
       const parsedQuestions: QuestionTypes[] = JSON.parse(questionsDb)
 
       const updatedQuestions = parsedQuestions.map((questionItem) =>
-        questionItem.id === question.id ? updated : questionItem,
+        questionItem._id === question._id ? updated : questionItem,
       )
 
       localStorage.setItem('@benx/questions', JSON.stringify(updatedQuestions))
     }
+
+    api.post(`/questions/${question._id}/answers`, { text: answer.text })
   }
 
   return (
@@ -121,7 +119,7 @@ const QuestionDetails: React.FC = () => {
       <Container>
         <QuestionsContainer>
           <Question
-            userName={userName}
+            userName={username}
             question={question}
             handleAnswerSubmit={handleAnswerSubmit}
             handleLikeAnswer={handleLikeAnswer}

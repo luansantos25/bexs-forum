@@ -7,26 +7,7 @@ import Question from '../../components/Question'
 
 import { Container, Form, QuestionsContainer } from './styles'
 
-interface AnswerForm {
-  questionId: string
-  text: string
-}
-
-interface Answer {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  likes: string[]
-}
-
-interface QuestionTypes {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  answers: Answer[]
-}
+import { Answer, QuestionTypes, AnswerForm } from '../../types'
 
 const General: React.FC = () => {
   const userName = localStorage.getItem('@bexs/userName') ?? ''
@@ -36,45 +17,45 @@ const General: React.FC = () => {
 
   const [questions, setQuestions] = useState<QuestionTypes[]>([
     {
-      id: uuid(),
+      _id: uuid(),
       text: 'What is your name?',
-      user: 'username',
-      creationDate: '2020-01-01 12:00:00',
+      username: 'username',
+      createdAt: '2020-01-01 12:00:00',
       answers: [
         {
-          id: uuid(),
+          _id: uuid(),
           text: 'Luan Santos',
-          user: 'another.username',
-          creationDate: '2020-01-01 12:00:00',
+          username: 'another.username',
+          createdAt: '2020-01-01 12:00:00',
           likes: [],
         },
         {
-          id: uuid(),
+          _id: uuid(),
           text: 'Bruno Santos',
-          user: 'another.username',
-          creationDate: '2020-01-01 12:00:00',
+          username: 'another.username',
+          createdAt: '2020-01-01 12:00:00',
           likes: [],
         },
       ],
     },
     {
-      id: uuid(),
+      _id: uuid(),
       text: 'What is your name?',
-      user: 'username',
-      creationDate: '2020-01-01 12:00:00',
+      username: 'username',
+      createdAt: '2020-01-01 12:00:00',
       answers: [
         {
-          id: uuid(),
+          _id: uuid(),
           text: 'Luan R. Santos',
-          user: 'another.username',
-          creationDate: '2020-01-01 12:00:00',
+          username: 'another.username',
+          createdAt: '2020-01-01 12:00:00',
           likes: [],
         },
         {
-          id: uuid(),
+          _id: uuid(),
           text: 'Bruno A. Santos',
-          user: 'another.username',
-          creationDate: '2020-01-01 12:00:00',
+          username: 'another.username',
+          createdAt: '2020-01-01 12:00:00',
           likes: ['luanr'],
         },
       ],
@@ -96,10 +77,10 @@ const General: React.FC = () => {
     event.preventDefault()
 
     const newQuestion = {
-      id: uuid(),
+      _id: uuid(),
       text: question,
-      user: userName,
-      creationDate: '',
+      username: userName,
+      createdAt: '',
       answers: [],
     }
 
@@ -109,22 +90,22 @@ const General: React.FC = () => {
 
   function handleAnswerSubmit(answerData: AnswerForm): void {
     const questionData = questions.find(
-      (questionItem) => questionItem.id === answerData.questionId,
+      (questionItem) => questionItem._id === answerData.questionId,
     )
 
     if (!questionData) return
 
     const updated = questions.map((questionItem) =>
-      questionItem.id === questionData.id
+      questionItem._id === questionData._id
         ? {
             ...questionItem,
             answers: [
               ...questionItem.answers,
               {
-                id: uuid(),
+                _id: uuid(),
                 text: answerData?.text ?? '',
-                user: userName,
-                creationDate: '',
+                username: userName,
+                createdAt: '',
                 likes: [],
               },
             ],
@@ -133,7 +114,7 @@ const General: React.FC = () => {
     )
 
     const resetAnswerForm = answersForm.map((answerItem) =>
-      answerItem.questionId === questionData.id
+      answerItem.questionId === questionData._id
         ? { ...answerItem, text: '' }
         : answerItem,
     )
@@ -144,11 +125,11 @@ const General: React.FC = () => {
 
   function handleLikeAnswer(answer: Answer, questionData: QuestionTypes): void {
     const updatedQuestions = questions.map((questionItem) =>
-      questionItem.id === questionData.id
+      questionItem._id === questionData._id
         ? {
             ...questionItem,
             answers: questionItem.answers.map((answerItem) =>
-              answerItem.id === answer.id
+              answerItem._id === answer._id
                 ? {
                     ...answerItem,
                     likes: answerItem.likes.includes(userName)
@@ -181,7 +162,7 @@ const General: React.FC = () => {
         <QuestionsContainer>
           {questions.map((questionItem) => (
             <Question
-              key={questionItem.id}
+              key={questionItem._id}
               userName={userName}
               question={questionItem}
               handleAnswerSubmit={handleAnswerSubmit}
