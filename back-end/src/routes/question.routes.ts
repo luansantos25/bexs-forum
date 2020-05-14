@@ -1,11 +1,11 @@
 import { Router } from 'express'
 
-import Question from '../schemas/Question'
+import QuestionsController from '../Controllers/QuestionsController'
 
 const questionRouter = Router()
 
 questionRouter.get('/', async (request, response) => {
-  const questions = await Question.find()
+  const questions = await QuestionsController.all()
 
   return response.json(questions)
 })
@@ -13,63 +13,66 @@ questionRouter.get('/', async (request, response) => {
 questionRouter.get('/:id', async (request, response) => {
   const { id } = request.params
 
-  const question = await Question.findById(id)
+  const question = await QuestionsController.index(id)
 
   return response.json(question)
 })
 
 questionRouter.post('/', async (request, response) => {
-  const { username, text, answers } = request.body
+  const { code, username, text, answers } = request.body
 
-  try {
-    const user = await Question.create({ user: username, text, answers })
-    return response.json(user)
-  } catch (err) {
-    return response.json({ error: err.message })
-  }
+  const question = await QuestionsController.create({
+    code,
+    username,
+    text,
+    answers,
+  })
+
+  return response.json(question)
 })
 
 questionRouter.post('/:id/answers', async (request, response) => {
   const { id } = request.params
-  const { text } = request.body
+  const { code, text, username } = request.body
 
-  const question = await Question.findOneAndUpdate(
-    { _id: id },
-    { $push: { answers: { text } } },
-    { new: true },
-  )
+  const updatedQuestion = await QuestionsController.createAnswer({
+    questionId: id,
+    code,
+    text,
+    username,
+  })
 
-  return response.json({ test: question })
+  return response.json(updatedQuestion)
 })
 
 questionRouter.post(
-  '/:questionId/answers/:answerId/likes',
+  '/:questionId/answers/:answerCode/likes',
   async (request, response) => {
-    const { questionId, answerId } = request.params
+    const { questionId, answerCode } = request.params
     const { username } = request.body
 
-    const question = await Question.findOneAndUpdate(
-      { _id: questionId, answers: { $elemMatch: { _id: answerId } } },
-      { $addToSet: { 'answers.$.likes': username } },
-      { new: true },
-    )
+    const updatedQuestion = await QuestionsController.createAnswerLike({
+      answerCode,
+      questionId,
+      username,
+    })
 
-    return response.json({ question })
+    return response.json(updatedQuestion)
   },
 )
 
 questionRouter.delete(
-  '/:questionId/answers/:answerId/likes/:username',
+  '/:questionId/answers/:answerCode/likes/:username',
   async (request, response) => {
-    const { questionId, answerId, username } = request.params
+    const { questionId, answerCode, username } = request.params
 
-    const question = await Question.findOneAndUpdate(
-      { _id: questionId, answers: { $elemMatch: { _id: answerId } } },
-      { $pull: { 'answers.$.likes': username } },
-      { new: true },
-    )
+    const updatedQuestion = await QuestionsController.removeAnswerLike({
+      answerCode,
+      questionId,
+      username,
+    })
 
-    return response.json({ question })
+    return response.json(updatedQuestion)
   },
 )
 
