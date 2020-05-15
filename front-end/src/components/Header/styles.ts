@@ -63,6 +63,7 @@ export const Header = styled.div`
         a {
           text-decoration: none;
           color: #fefefe;
+          font-size: 12px;
         }
       }
     }

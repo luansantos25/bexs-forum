@@ -1,38 +1,44 @@
 import React from 'react'
 
+import { formatDistanceToNow, parseISO } from 'date-fns'
+
 import { FaHeart } from 'react-icons/fa'
 
 import { StyledAnswer } from './styles'
 
-interface AnswerTypes {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  likes: string[]
-}
+import { Answer as AnswerTypes } from '../../types'
 
 interface Props {
   userName: string
   answer: AnswerTypes
+  createdAt: string
   handleLikeAnswer(answer: AnswerTypes): void
 }
 
 const Answer: React.FC<Props> = ({
   userName,
   answer,
+  createdAt,
   handleLikeAnswer,
 }: Props) => {
   return (
     <StyledAnswer>
       <div className="answer">
         <img
-          src="https://api.adorable.io/avatars/285/abott@adorable.png"
+          src={`https://ui-avatars.com/api/?name=${answer.username}&background=bdc3c7&color=fff`}
           alt="User Avatar"
         />
         <div className="answer-content">
           <div className="answer-data">
-            <strong>{answer.user}</strong>
+            <strong>
+              {answer.username}{' '}
+              <span className="time-ago">
+                {createdAt &&
+                  formatDistanceToNow(parseISO(createdAt), {
+                    addSuffix: true,
+                  })}
+              </span>
+            </strong>
             <div className="answer-text">{answer.text}</div>
           </div>
           <button type="button" onClick={() => handleLikeAnswer(answer)}>

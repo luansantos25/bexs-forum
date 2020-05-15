@@ -49,7 +49,9 @@
           "tsx": "never"
         }
       ],
-      "semi": ["error", "never"]
+      "semi": ["error", "never"],
+      "no-underscore-dangle": ["error", {"allow": ["_id"]}],
+      "react/jsx-curly-newline": "off"
     },
     "settings": {
       "import/resolver": {

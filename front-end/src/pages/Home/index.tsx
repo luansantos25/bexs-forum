@@ -1,128 +1,81 @@
-import React, { useState, FormEvent, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import { uuid } from 'uuidv4'
 import { Link } from 'react-router-dom'
-import Header from '../../components/Header'
+import api from '../../services/api'
 
+import MakeQuestion from '../../components/MakeQuestion'
 import Question from '../../components/Question'
+import createQuestionService from '../../services/createQuestionService'
 
-import { Container, Form, QuestionsContainer } from './styles'
+import Filter from '../../components/Filter'
 
-interface Answer {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  likes: string[]
-}
+import { Container, QuestionsContainer } from './styles'
 
-interface QuestionTypes {
-  id: string
-  text: string
-  user: string
-  creationDate: string
-  answers: Answer[]
-}
+import { QuestionTypes } from '../../types'
 
 const Home: React.FC = () => {
-  const userName = localStorage.getItem('@bexs/userName') ?? ''
+  const username = localStorage.getItem('@bexs/userName') ?? ''
 
-  const [question, setQuestion] = useState('')
-
-  const [questions, setQuestions] = useState<QuestionTypes[]>([
-    {
-      id: uuid(),
-      text: 'What is your name?',
-      user: 'username',
-      creationDate: '2020-01-01 12:00:00',
-      answers: [
-        {
-          id: uuid(),
-          text: 'Luan Santos',
-          user: 'another.username',
-          creationDate: '2020-01-01 12:00:00',
-          likes: [],
-        },
-        {
-          id: uuid(),
-          text: 'Bruno Santos',
-          user: 'another.username',
-          creationDate: '2020-01-01 12:00:00',
-          likes: [],
-        },
-      ],
-    },
-    {
-      id: uuid(),
-      text: 'What is your name?',
-      user: 'username',
-      creationDate: '2020-01-01 12:00:00',
-      answers: [
-        {
-          id: uuid(),
-          text: 'Luan R. Santos',
-          user: 'another.username',
-          creationDate: '2020-01-01 12:00:00',
-          likes: [],
-        },
-        {
-          id: uuid(),
-          text: 'Bruno A. Santos',
-          user: 'another.username',
-          creationDate: '2020-01-01 12:00:00',
-          likes: ['luanr'],
-        },
-      ],
-    },
-  ])
+  const [questions, setQuestions] = useState<QuestionTypes[]>([])
+  const [allQuestions, setAllQuestions] = useState<QuestionTypes[]>([])
 
   useEffect(() => {
-    const initialQuestions = localStorage.getItem('@benx/questions')
-    if (initialQuestions) {
-      setQuestions(JSON.parse(initialQuestions))
+    async function getData(): Promise<void> {
+      const questionsData = await api.get('/questions')
+
+      setQuestions(questionsData.data)
+      setAllQuestions(questionsData.data)
     }
+
+    getData()
   }, [])
 
-  useEffect(() => {
-    localStorage.setItem('@benx/questions', JSON.stringify(questions))
-  }, [questions])
-
-  function handleQuestionSubmit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault()
-
-    const newQuestion = {
-      id: uuid(),
-      text: question,
-      user: userName,
-      creationDate: '',
-      answers: [],
-    }
+  function handleCreateQuestion(question: string): void {
+    const newQuestion = createQuestionService({
+      question,
+      username,
+    })
 
     setQuestions([newQuestion, ...questions])
-    setQuestion('')
+    setAllQuestions([newQuestion, ...questions])
   }
+
+  const handleSearchFilter = useCallback(
+    ({
+      textToSearch,
+      noAnswered,
+    }: {
+      textToSearch: string
+      noAnswered: boolean
+    }): void => {
+      const filteredQuestions = allQuestions
+        .filter((questionItem) =>
+          questionItem.text.toLowerCase().includes(textToSearch),
+        )
+        .filter((questionItem) => {
+          return noAnswered ? !(questionItem.answers.length > 0) : true
+        })
+
+      setQuestions(filteredQuestions)
+    },
+    [allQuestions],
+  )
 
   return (
     <>
-      <Header />
       <Container>
         <div className="top-content">
-          <h1>Olá {userName}</h1>
-          <Form onSubmit={handleQuestionSubmit}>
-            <textarea
-              placeholder="Type your question"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-            />
-            <button type="submit">Send</button>
-          </Form>
+          <h1 className="title">Olá, {username}</h1>
+          <MakeQuestion handleCreateQuestion={handleCreateQuestion} />
+          <Filter handleSearchFilter={handleSearchFilter} />
         </div>
 
         <QuestionsContainer>
-          {questions.map((questionItem) => (
-            <Link to={`/question/${questionItem.id}`} key={uuid()}>
+          {questions.map((questionItem: QuestionTypes) => (
+            <Link to={`/question/${questionItem.code}`} key={uuid()}>
               <Question
-                userName={userName}
+                userName={username}
                 question={questionItem}
                 showAnswers={false}
               />

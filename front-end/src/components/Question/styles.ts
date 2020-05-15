@@ -21,17 +21,39 @@ export const StyledQuestion = styled.div`
     border-bottom: solid 1px #ccc;
     padding: 0 10px 40px;
 
-    span {
+    span.response-number {
       display: block;
       margin-top: 10px;
       color: #b0b0b0;
-      font-size: 14px;
+      font-size: 12px;
+    }
+
+    span.time-ago {
+      font-size: 9px;
     }
   }
 `
 
 export const AnswerContainer = styled.div`
   position: relative;
+  max-height: 40vh;
+  overflow: auto;
+
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #ccc;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 `
 
 export const Response = styled.div`
@@ -43,6 +65,7 @@ export const Response = styled.div`
     padding: 10px;
     margin-bottom: 5px;
     border: none;
+    background-color: transparent;
     border-bottom: solid 1px #ccc;
     resize: none;
   }
@@ -56,5 +79,9 @@ export const Response = styled.div`
     border: none;
     border-radius: 5px;
     color: #fff;
+
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 `
