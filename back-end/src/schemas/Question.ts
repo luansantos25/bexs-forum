@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 
 interface AnswerTypes {
-  // _id?: string
   code: string
   text: string
   username: string
@@ -17,25 +16,6 @@ interface QuestionTypes extends mongoose.Document {
   createdAt?: string
   answers: AnswerTypes[]
 }
-
-// const AnswersSchema = new mongoose.Schema(
-//   {
-//     code: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//     },
-//     text: String,
-//     likes: [
-//       {
-//         type: String,
-//       },
-//     ],
-//   },
-//   {
-//     timestamps: true,
-//   },
-// )
 
 const QuestionSchema = new mongoose.Schema(
   {

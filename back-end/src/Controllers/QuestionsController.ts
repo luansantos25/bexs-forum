@@ -20,7 +20,7 @@ interface QuestionTypes {
 
 class QuestionsController {
   async all(): Promise<QuestionTypes[]> {
-    const questions = await Question.find()
+    const questions = await Question.find().sort({ createdAt: -1 })
 
     return questions
   }
@@ -60,7 +60,17 @@ class QuestionsController {
 
     const question = await Question.findOneAndUpdate(
       { [filterId]: questionId },
-      { $push: { answers: { code, username, text, likes: [] } } },
+      {
+        $push: {
+          answers: {
+            code,
+            username,
+            text,
+            likes: [],
+            createdAt: new Date().toISOString(),
+          },
+        },
+      },
       { new: true },
     )
 
