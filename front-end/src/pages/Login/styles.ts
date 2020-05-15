@@ -4,7 +4,6 @@ export const Container = styled.div`
   display: flex;
   width: 100vw;
   height: 100vh;
-  /* width: 768px; */
   justify-content: center;
   align-items: center;
 
@@ -37,5 +36,10 @@ export const Form = styled.form`
     border: none;
     color: white;
     text-transform: uppercase;
+
+    :disabled {
+      opacity: 0.9;
+      cursor: not-allowed;
+    }
   }
 `

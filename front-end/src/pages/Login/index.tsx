@@ -9,7 +9,7 @@ const Login: React.FC = () => {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
-    localStorage.setItem('@bexs/userName', userName)
+    localStorage.setItem('@bexs/userName', userName.replace(/\s/g, ''))
 
     history.push('/home')
   }
@@ -17,14 +17,16 @@ const Login: React.FC = () => {
   return (
     <Container>
       <div className="login-content">
-        <Title>Login</Title>
+        <Title>BEXS</Title>
         <Form onSubmit={handleSubmit}>
           <input
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
             placeholder="username"
           />
-          <button type="submit">SignIn</button>
+          <button type="submit" disabled={!(userName?.length >= 2)}>
+            SignIn
+          </button>
         </Form>
       </div>
     </Container>

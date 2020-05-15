@@ -1,5 +1,5 @@
 export interface Answer {
-  _id: string
+  code: string
   text: string
   username: string
   createdAt: string
@@ -7,7 +7,8 @@ export interface Answer {
 }
 
 export interface QuestionTypes {
-  _id: string
+  _id?: string
+  code: string
   text: string
   username: string
   createdAt: string

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const StyledAnswer = styled.div`
   font-size: 16px;
   color: #404040;
-  margin-left: 30px;
+  padding: 0 50px;
 
   div.answer {
     display: flex;
@@ -18,6 +18,15 @@ export const StyledAnswer = styled.div`
       background: #cccccc2b;
       padding: 10px;
       border-radius: 10px;
+
+      div.answer-data {
+        strong {
+          span.time-ago {
+            font-size: 10px;
+            font-weight: 300;
+          }
+        }
+      }
 
       div.answer-text {
         margin-top: 10px;
@@ -40,7 +49,7 @@ export const StyledAnswer = styled.div`
 
       span {
         font-size: 12px;
-        color: #707070;
+        color: #b9b9b9;
         position: absolute;
         margin-top: -8px;
       }
@@ -50,7 +59,7 @@ export const StyledAnswer = styled.div`
       }
 
       svg.liked {
-        color: rebeccapurple;
+        color: #4bde95;
       }
     }
   }

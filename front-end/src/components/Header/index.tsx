@@ -27,8 +27,8 @@ const Header: React.FC = () => {
           </ul>
           <div className="user">
             <img
-              src="https://api.adorable.io/avatars/285/abott@adorable.png"
-              alt=""
+              src={`https://ui-avatars.com/api/?name=${username}&background=aaa&color=fff`}
+              alt="Avatar"
             />
             <div className="user-data">
               <strong>{username}</strong>

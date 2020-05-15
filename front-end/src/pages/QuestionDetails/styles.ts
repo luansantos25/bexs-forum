@@ -8,6 +8,17 @@ export const Container = styled.div`
   h1 {
     color: #4bde95;
   }
+
+  a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #777;
+
+    svg {
+      margin-right: 5px;
+    }
+  }
 `
 
 export const QuestionsContainer = styled.div`

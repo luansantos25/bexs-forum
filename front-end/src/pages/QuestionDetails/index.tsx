@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react'
 
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 
-import { uuid } from 'uuidv4'
+import { FaChevronLeft } from 'react-icons/fa'
 
 import api from '../../services/api'
-
-import Header from '../../components/Header'
 
 import Question from '../../components/Question'
 
 import { Container, QuestionsContainer } from './styles'
 
 import { Answer, QuestionTypes, AnswerForm } from '../../types'
+
+import createAnswerService from '../../services/createAnswerService'
+import updateLocalQuestionAnswersService from '../../services/updateLocalQuestionAnswersService'
 
 const QuestionDetails: React.FC = () => {
   const { id } = useParams()
@@ -26,31 +27,17 @@ const QuestionDetails: React.FC = () => {
   useEffect(() => {
     async function getData(): Promise<void> {
       const questionData = await api.get(`/questions/${id}`)
-
       setQuestion(questionData.data)
-
-      console.log(questionData)
     }
 
     getData()
-  }, [id])
-
-  useEffect(() => {
-    // const questionsData = localStorage.getItem('@benx/questions')
-    // if (questionsData) {
-    //   const questions: QuestionTypes[] = JSON.parse(questionsData)
-    //   setQuestion(
-    //     questions.find((questionItem) => questionItem._id === id) ??
-    //       ({} as QuestionTypes),
-    //   )
-    // }
   }, [id])
 
   function handleLikeAnswer(answer: Answer): void {
     const updatedQuestion = {
       ...question,
       answers: question.answers.map((answerItem) =>
-        answerItem._id === answer._id
+        answerItem.code === answer.code
           ? {
               ...answerItem,
               likes: answerItem.likes.includes(username)
@@ -63,78 +50,50 @@ const QuestionDetails: React.FC = () => {
 
     setQuestion(updatedQuestion)
 
-    // const questionsDb: string = localStorage.getItem('@benx/questions') ?? ''
-
-    // if (questionsDb) {
-    //   const parsedQuestions: QuestionTypes[] = JSON.parse(questionsDb)
-
-    //   const updatedQuestions = parsedQuestions.map((questionItem) =>
-    //     questionItem._id === question._id ? updatedQuestion : questionItem,
-    //   )
-
-    //   localStorage.setItem('@benx/questions', JSON.stringify(updatedQuestions))
-    // }
-
     const liked = answer.likes.includes(username)
 
     if (!liked) {
-      console.log('liking')
-      api.post(`/questions/${question._id}/answers/${answer._id}/likes`, {
+      api.post(`/questions/${question.code}/answers/${answer.code}/likes`, {
         username,
       })
     } else {
-      console.log('disliking')
-
       api.delete(
-        `/questions/${question._id}/answers/${answer._id}/likes/${username}`,
+        `/questions/${question.code}/answers/${answer.code}/likes/${username}`,
       )
     }
   }
 
-  function handleAnswerSubmit(answer: AnswerForm): void {
-    const updated = {
-      ...question,
-      answers: [
-        ...question.answers,
-        {
-          _id: uuid(),
-          text: answer?.text ?? '',
-          username,
-          createdAt: '',
-          likes: [],
-        },
-      ],
-    }
+  function handleCreateAnswer(answer: AnswerForm): void {
+    const updated = createAnswerService({
+      questionCode: question.code,
+      text: answer.text,
+      username,
+    })
 
     const resetAnswerForm = { ...answerForm, text: '' }
 
-    setQuestion(updated)
+    const [updatedQuestion] = updateLocalQuestionAnswersService({
+      answer: updated,
+      questionId: question.code,
+      questions: [question],
+    })
+
+    setQuestion(updatedQuestion)
     setAnswerForm(resetAnswerForm)
-
-    // const questionsDb: string = localStorage.getItem('@benx/questions') ?? ''
-
-    // if (questionsDb) {
-    //   const parsedQuestions: QuestionTypes[] = JSON.parse(questionsDb)
-
-    //   const updatedQuestions = parsedQuestions.map((questionItem) =>
-    //     questionItem._id === question._id ? updated : questionItem,
-    //   )
-
-    //   localStorage.setItem('@benx/questions', JSON.stringify(updatedQuestions))
-    // }
-
-    api.post(`/questions/${question._id}/answers`, { text: answer.text })
   }
 
   return (
     <>
-      <Header />
       <Container>
+        <Link to="/home">
+          <FaChevronLeft />
+          Back
+        </Link>
         <QuestionsContainer>
           <Question
             userName={username}
             question={question}
-            handleAnswerSubmit={handleAnswerSubmit}
+            handleCreateAnswer={handleCreateAnswer}
             handleLikeAnswer={handleLikeAnswer}
           />
         </QuestionsContainer>

@@ -1,68 +1,24 @@
-import React, { useState, FormEvent, useEffect } from 'react'
-
-import { uuid } from 'uuidv4'
-import Header from '../../components/Header'
+import React, { useState, useEffect } from 'react'
 
 import api from '../../services/api'
 
 import Question from '../../components/Question'
 
-import { Container, Form, QuestionsContainer } from './styles'
+import { Container, QuestionsContainer } from './styles'
+
+import MakeQuestion from '../../components/MakeQuestion'
 
 import { Answer, QuestionTypes, AnswerForm } from '../../types'
+
+import createQuestionService from '../../services/createQuestionService'
+import createAnswerService from '../../services/createAnswerService'
+import updateLocalQuestionAnswersService from '../../services/updateLocalQuestionAnswersService'
+import createLikeQuestionAnswerService from '../../services/createLikeQuestionAnswerService'
 
 const General: React.FC = () => {
   const username = localStorage.getItem('@bexs/userName') ?? ''
 
-  const [question, setQuestion] = useState('')
-  const [answersForm, setAnswersForm] = useState<AnswerForm[]>([])
-
-  const [questions, setQuestions] = useState<QuestionTypes[]>([
-    {
-      _id: uuid(),
-      text: 'What is your name?',
-      username: 'username',
-      createdAt: '2020-01-01 12:00:00',
-      answers: [
-        {
-          _id: uuid(),
-          text: 'Luan Santos',
-          username: 'another.username',
-          createdAt: '2020-01-01 12:00:00',
-          likes: [],
-        },
-        {
-          _id: uuid(),
-          text: 'Bruno Santos',
-          username: 'another.username',
-          createdAt: '2020-01-01 12:00:00',
-          likes: [],
-        },
-      ],
-    },
-    {
-      _id: uuid(),
-      text: 'What is your name?',
-      username: 'username',
-      createdAt: '2020-01-01 12:00:00',
-      answers: [
-        {
-          _id: uuid(),
-          text: 'Luan R. Santos',
-          username: 'another.username',
-          createdAt: '2020-01-01 12:00:00',
-          likes: [],
-        },
-        {
-          _id: uuid(),
-          text: 'Bruno A. Santos',
-          username: 'another.username',
-          createdAt: '2020-01-01 12:00:00',
-          likes: ['luanr'],
-        },
-      ],
-    },
-  ])
+  const [questions, setQuestions] = useState<QuestionTypes[]>([])
 
   useEffect(() => {
     async function getData(): Promise<void> {
@@ -74,120 +30,57 @@ const General: React.FC = () => {
     getData()
   }, [])
 
-  function handleQuestionSubmit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault()
-
-    const newQuestion = {
-      _id: uuid(),
-      text: question,
+  function handleCreateQuestion(question: string): void {
+    const newQuestion = createQuestionService({
+      question,
       username,
-      createdAt: '',
-      answers: [],
-    }
+    })
 
     setQuestions([newQuestion, ...questions])
-    setQuestion('')
-
-    api.post('/questions', newQuestion)
   }
 
-  function handleAnswerSubmit(answerData: AnswerForm): void {
-    const questionData = questions.find(
-      (questionItem) => questionItem._id === answerData.questionId,
-    )
+  function handleCreateAnswer(answerData: AnswerForm): void {
+    const answer = createAnswerService({
+      questionCode: answerData.questionId,
+      text: answerData.text,
+      username,
+    })
 
-    if (!questionData) return
-
-    const updated = questions.map((questionItem) =>
-      questionItem._id === questionData._id
-        ? {
-            ...questionItem,
-            answers: [
-              ...questionItem.answers,
-              {
-                _id: uuid(),
-                text: answerData?.text ?? '',
-                username,
-                createdAt: '',
-                likes: [],
-              },
-            ],
-          }
-        : questionItem,
-    )
-
-    const resetAnswerForm = answersForm.map((answerItem) =>
-      answerItem.questionId === questionData._id
-        ? { ...answerItem, text: '' }
-        : answerItem,
-    )
+    const updated = updateLocalQuestionAnswersService({
+      answer,
+      questions,
+      questionId: answerData.questionId,
+    })
 
     setQuestions(updated)
-    setAnswersForm(resetAnswerForm)
-
-    api.post(`/questions/${questionData._id}/answers`, {
-      text: answerData.text,
-    })
   }
 
   function handleLikeAnswer(answer: Answer, questionData: QuestionTypes): void {
-    const updatedQuestions = questions.map((questionItem) =>
-      questionItem._id === questionData._id
-        ? {
-            ...questionItem,
-            answers: questionItem.answers.map((answerItem) =>
-              answerItem._id === answer._id
-                ? {
-                    ...answerItem,
-                    likes: answerItem.likes.includes(username)
-                      ? answerItem.likes.filter((like) => like !== username)
-                      : [...answerItem.likes, username],
-                  }
-                : answerItem,
-            ),
-          }
-        : questionItem,
-    )
+    const updatedQuestions = createLikeQuestionAnswerService({
+      answer,
+      questionCode: questionData.code,
+      questions,
+      username,
+    })
 
     setQuestions(updatedQuestions)
-
-    const liked = answer.likes.includes(username)
-
-    if (!liked) {
-      console.log('liking')
-      api.post(`/questions/${questionData._id}/answers/${answer._id}/likes`, {
-        username,
-      })
-    } else {
-      console.log('disliking')
-
-      api.delete(
-        `/questions/${questionData._id}/answers/${answer._id}/likes/${username}`,
-      )
-    }
   }
 
   return (
     <>
-      <Header />
       <Container>
-        <h1>Olá {username}</h1>
-        <Form onSubmit={handleQuestionSubmit}>
-          <textarea
-            placeholder="Type your question"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
-          <button type="submit">Send</button>
-        </Form>
+        <div className="top-content">
+          <h1>Olá {username}</h1>
+          <MakeQuestion handleCreateQuestion={handleCreateQuestion} />
+        </div>
 
         <QuestionsContainer>
           {questions.map((questionItem) => (
             <Question
-              key={questionItem._id}
+              key={questionItem.code}
               userName={username}
               question={questionItem}
-              handleAnswerSubmit={handleAnswerSubmit}
+              handleCreateAnswer={handleCreateAnswer}
               handleLikeAnswer={(answer, questionData) =>
                 handleLikeAnswer(answer, questionData)
               }

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 
+import { animateScroll } from 'react-scroll'
+
+import { formatDistanceToNow, parseISO } from 'date-fns'
 import Answer from '../Answer'
-// import { Answers } from '../../pages/General/styles'
 
 import { StyledQuestion, AnswerContainer, Response } from './styles'
 
@@ -11,28 +13,35 @@ interface Props {
   question: QuestionTypes
   userName: string
   showAnswers?: boolean
-  handleAnswer?: (answer: AnswerForm) => void
-  handleAnswerSubmit?: (answer: AnswerForm) => void
+  handleCreateAnswer?: (answer: AnswerForm) => void
   handleLikeAnswer?: (answer: AnswerTypes, question: QuestionTypes) => void
 }
 
 const Question: React.FC<Props> = ({
   question,
   userName,
-  handleAnswer,
-  handleAnswerSubmit,
+  handleCreateAnswer,
   handleLikeAnswer,
   showAnswers = true,
 }: Props) => {
   const [answerText, setAnswerText] = useState<AnswerForm>({} as AnswerForm)
+  const [countAnswers, setCountAnswers] = useState(0)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (handleAnswer) handleAnswer(answerText)
-  })
+    if (loaded && question.answers && question.answers.length > countAnswers) {
+      animateScroll.scrollToBottom({
+        containerId: question.code,
+        duration: 800,
+      })
+    }
+    setLoaded(true)
+    setCountAnswers(question?.answers?.length ?? 0)
+  }, [question, countAnswers, loaded])
 
-  function handleAnswerSubmitLocal(): void {
-    if (handleAnswerSubmit) {
-      handleAnswerSubmit(answerText)
+  function handleCreateAnswerLocal(): void {
+    if (handleCreateAnswer) {
+      handleCreateAnswer(answerText)
       setAnswerText({ ...answerText, text: '' })
     }
   }
@@ -41,21 +50,32 @@ const Question: React.FC<Props> = ({
     <StyledQuestion>
       <div className="question-content">
         <p>{question.text}</p>
-        <span>Responses: {question.answers && question.answers.length}</span>
+        <span className="response-number">
+          Responses: {question.answers && question.answers.length}
+        </span>
+        <span className="time-ago">
+          {question.createdAt &&
+            formatDistanceToNow(parseISO(question.createdAt), {
+              addSuffix: true,
+            })}
+        </span>
       </div>
       {showAnswers && (
-        <AnswerContainer>
-          {question.answers &&
-            question.answers.map((answer) => (
-              <Answer
-                key={answer._id}
-                userName={userName}
-                handleLikeAnswer={() =>
-                  handleLikeAnswer ? handleLikeAnswer(answer, question) : null
-                }
-                answer={answer}
-              />
-            ))}
+        <div>
+          <AnswerContainer id={question.code}>
+            {question.answers &&
+              question.answers.map((answer) => (
+                <Answer
+                  key={answer.code}
+                  userName={userName}
+                  createdAt={answer.createdAt}
+                  handleLikeAnswer={() =>
+                    handleLikeAnswer ? handleLikeAnswer(answer, question) : null
+                  }
+                  answer={answer}
+                />
+              ))}
+          </AnswerContainer>
           <Response>
             <form>
               <textarea
@@ -63,17 +83,28 @@ const Question: React.FC<Props> = ({
                 placeholder="Write your response"
                 onChange={(e) =>
                   setAnswerText({
-                    questionId: question._id,
+                    questionId: question.code,
                     text: e.target.value,
                   })
                 }
+                onKeyPress={(e) => {
+                  return (
+                    e.charCode === 13 &&
+                    answerText?.text?.length > 5 &&
+                    handleCreateAnswerLocal()
+                  )
+                }}
               />
-              <button type="button" onClick={() => handleAnswerSubmitLocal()}>
+              <button
+                disabled={!(answerText?.text?.length > 5)}
+                type="button"
+                onClick={() => handleCreateAnswerLocal()}
+              >
                 Answer
               </button>
             </form>
           </Response>
-        </AnswerContainer>
+        </div>
       )}
     </StyledQuestion>
   )
