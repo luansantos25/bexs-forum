@@ -37,6 +37,6 @@ docker run -–name api-bexs –p 27017:27017 –d –t mongo
 
 
 #### Observações
-* Para acessar os parâmetros necessários para as requisições *POST*, acesse o *workspace* do *Postman*, encontrado na raiz da aplicação.
+* Para acessar os parâmetros necessários para as requisições *POST*, acesse o *workspace* do *Postman*, por meio do arquivo *json* encontrado na raiz da aplicação.
 * Todos os *codes* dos produtos devem ser gerados pelo *uuidv4*. As coleções contam com esse código adicional para que a experiência de geração de conteúdo no front-end possa ser favorecida.
 * Qualquer dúvida, fico à disposição.
