@@ -1,0 +1,122 @@
+{
+	"variables": [],
+	"info": {
+		"name": "BexsBankTest",
+		"_postman_id": "cae02b27-7414-857e-b3a6-e78231ccbdf8",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Questions",
+			"description": "",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"url": "{{base_url}}/questions",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"url": "{{base_url}}/questions",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"code\": \"dd731478-8248-4a9f-b6b2-f2f9ccf4e905\",\n\t\"text\": \"What is your name?\",\n\t\"username\": \"Luan Santos\",\n\t\"answers\": {\n\t\t\"code\": \"415c8ae6-5cba-458f-9d86-a0e5d710c253\",\n\t\t\"text\": \"answer test\",\n\t\t\"likes\": []\n\t}\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Index",
+					"request": {
+						"url": "{{base_url}}/questions/5ec01422939e014c4f744871",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Answers",
+			"description": "",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"url": "{{base_url}}/questions/5ec01422939e014c4f744871/answers",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"code\": \"f59216d2-249d-412e-8581-c94ef11fb71b\",\n\t\"username\": \"luansantos\",\n\t\"text\": \"creating answer\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Likes",
+			"description": "",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"url": "{{base_url}}/questions/dd731478-8248-4a9f-b6b2-f2f9ccf4e905/answers/415c8ae6-5cba-458f-9d86-a0e5d710c253/likes",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"luansantos\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"url": "{{base_url}}/questions/dd731478-8248-4a9f-b6b2-f2f9ccf4e905/answers/415c8ae6-5cba-458f-9d86-a0e5d710c253/likes/luansantos",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
