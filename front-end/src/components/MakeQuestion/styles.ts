@@ -14,6 +14,18 @@ export const QuestionForm = styled.div`
     background-color: transparent;
   }
 
+  small {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    color: #ccc;
+
+    svg {
+      margin-left: 3px;
+      font-size: 12px;
+    }
+  }
+
   button {
     display: block;
     width: 200px;

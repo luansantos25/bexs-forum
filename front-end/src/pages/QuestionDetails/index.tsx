@@ -18,7 +18,7 @@ import updateLocalQuestionAnswersService from '../../services/updateLocalQuestio
 const QuestionDetails: React.FC = () => {
   const { id } = useParams()
 
-  const username = localStorage.getItem('@bexs/userName') ?? ''
+  const username = localStorage.getItem('@bexs/username') ?? ''
 
   const [answerForm, setAnswerForm] = useState<AnswerForm>({} as AnswerForm)
 

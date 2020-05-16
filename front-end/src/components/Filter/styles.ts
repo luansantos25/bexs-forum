@@ -9,7 +9,7 @@ export const FilterContainer = styled.div`
   margin-top: 60px;
 
   input[type='checkbox'] {
-    margin-right: 10px;
+    margin-right: 5px;
   }
 
   input[type='text'] {
@@ -20,6 +20,7 @@ export const FilterContainer = styled.div`
   }
 
   label {
+    display: flex;
     font-size: 12px;
   }
 `

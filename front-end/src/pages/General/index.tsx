@@ -16,7 +16,7 @@ import updateLocalQuestionAnswersService from '../../services/updateLocalQuestio
 import createLikeQuestionAnswerService from '../../services/createLikeQuestionAnswerService'
 
 const General: React.FC = () => {
-  const username = localStorage.getItem('@bexs/userName') ?? ''
+  const username = localStorage.getItem('@bexs/username') ?? ''
 
   const [questions, setQuestions] = useState<QuestionTypes[]>([])
 
@@ -70,7 +70,7 @@ const General: React.FC = () => {
     <>
       <Container>
         <div className="top-content">
-          <h1>Olá {username}</h1>
+          <h1>Hello, {username}</h1>
           <MakeQuestion handleCreateQuestion={handleCreateQuestion} />
         </div>
 

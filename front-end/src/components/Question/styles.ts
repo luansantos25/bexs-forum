@@ -1,7 +1,11 @@
 import styled from 'styled-components'
 import { darken } from 'polished'
 
-export const StyledQuestion = styled.div`
+interface Props {
+  asLink?: boolean
+}
+
+export const StyledQuestion = styled.div<Props>`
   display: block;
   background-color: #fff;
   border-radius: 10px;
@@ -12,9 +16,9 @@ export const StyledQuestion = styled.div`
   transition: 0.3s;
 
   &:hover {
-    transform: translateX(-1px);
+    transform: translateX(-3px);
     background-color: ${darken(0.02, '#fff')};
-    cursor: pointer;
+    cursor: ${({asLink}) => asLink ? 'pointer' : 'auto'};
   }
 
   div.question-content {
