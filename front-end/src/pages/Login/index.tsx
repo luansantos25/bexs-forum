@@ -9,7 +9,7 @@ const Login: React.FC = () => {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
-    localStorage.setItem('@bexs/userName', userName.replace(/\s/g, ''))
+    localStorage.setItem('@bexs/username', userName.replace(/\s/g, ''))
 
     history.push('/home')
   }

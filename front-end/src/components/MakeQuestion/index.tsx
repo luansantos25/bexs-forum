@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 
 import { QuestionForm } from './styles'
 
+import { BsArrowReturnLeft } from 'react-icons/bs'
+
 interface Props {
   handleCreateQuestion: (question: string) => void
 }
@@ -23,6 +25,7 @@ const MakeQuestion: React.FC<Props> = ({ handleCreateQuestion }: Props) => {
           )
         }}
       />
+      <small>Send with <BsArrowReturnLeft/></small>
       <button
         type="submit"
         onClick={() => {

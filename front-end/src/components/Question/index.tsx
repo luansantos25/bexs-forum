@@ -13,6 +13,7 @@ interface Props {
   question: QuestionTypes
   userName: string
   showAnswers?: boolean
+  asLink?: boolean
   handleCreateAnswer?: (answer: AnswerForm) => void
   handleLikeAnswer?: (answer: AnswerTypes, question: QuestionTypes) => void
 }
@@ -23,6 +24,7 @@ const Question: React.FC<Props> = ({
   handleCreateAnswer,
   handleLikeAnswer,
   showAnswers = true,
+  asLink = false
 }: Props) => {
   const [answerText, setAnswerText] = useState<AnswerForm>({} as AnswerForm)
   const [countAnswers, setCountAnswers] = useState(0)
@@ -47,7 +49,7 @@ const Question: React.FC<Props> = ({
   }
 
   return (
-    <StyledQuestion>
+    <StyledQuestion asLink={asLink}>
       <div className="question-content">
         <p>{question.text}</p>
         <span className="response-number">

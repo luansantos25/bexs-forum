@@ -45,7 +45,6 @@ describe("QuestionDetails component", () => {
       wrapper.update();
     });
 
-    console.log(wrapper)
     expect(wrapper
     .find('.question-content p')
     .text())

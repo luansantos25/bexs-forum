@@ -7,7 +7,7 @@ const Header: React.FC = () => {
   const [username, setUsername] = useState('')
 
   useEffect(() => {
-    setUsername(localStorage.getItem('@bexs/userName') ?? '')
+    setUsername(localStorage.getItem('@bexs/username') ?? '')
   }, [])
 
   return (

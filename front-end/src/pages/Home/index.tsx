@@ -15,7 +15,7 @@ import { Container, QuestionsContainer } from './styles'
 import { QuestionTypes } from '../../types'
 
 const Home: React.FC = () => {
-  const username = localStorage.getItem('@bexs/userName') ?? ''
+  const username = localStorage.getItem('@bexs/username') ?? ''
 
   const [questions, setQuestions] = useState<QuestionTypes[]>([])
   const [allQuestions, setAllQuestions] = useState<QuestionTypes[]>([])
@@ -66,7 +66,7 @@ const Home: React.FC = () => {
     <>
       <Container>
         <div className="top-content">
-          <h1 className="title">Olá, {username}</h1>
+          <h1 className="title">Hello, {username}</h1>
           <MakeQuestion handleCreateQuestion={handleCreateQuestion} />
           <Filter handleSearchFilter={handleSearchFilter} />
         </div>
@@ -78,6 +78,7 @@ const Home: React.FC = () => {
                 userName={username}
                 question={questionItem}
                 showAnswers={false}
+                asLink
               />
             </Link>
           ))}
