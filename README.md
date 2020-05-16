@@ -1,7 +1,7 @@
 ## Bexbank
 
 ### Descrição
-* Pequena plataforma destinada ao gerenciamento de perguntas e responstas de nossos usuários.
+* Pequena plataforma destinada ao gerenciamento de perguntas e respostas de nossos usuários.
 
 ## Requisitos para execução (Local)
 * Clone ou baixe o projeto em sua máquina
