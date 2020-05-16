@@ -71,7 +71,7 @@ const Home: React.FC = () => {
           <Filter handleSearchFilter={handleSearchFilter} />
         </div>
 
-        <QuestionsContainer>
+        <QuestionsContainer data-testid="questions-list">
           {questions.map((questionItem: QuestionTypes) => (
             <Link to={`/question/${questionItem.code}`} key={uuid()}>
               <Question
